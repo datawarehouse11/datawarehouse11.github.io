@@ -20,18 +20,17 @@
 </head>
 <body>
     <div class="content">
-         # Preprocessing
-### Real world data is often incomplete, inconsistent and is likely to contain errors
-### We must fix our data of these errors as it's important to ensure the quality of our data for further analysis because better
-### data quality ensures better accuracy, precision, interpretability of the results of analysis and also that these results
-### are correct and complete.
-## We'll cover:
-# Cleaning data
-# Merging multiple Dataframes
-# Sub-setting data frames based on a condition
-# Ordering data in ascending/descending order
-# Reshaping a dataframe
-
+         <h1>Preprocessing</h1>
+<p>Real world data is often incomplete, inconsistent and is likely to contain errors. We must fix our data of these errors as it's important to ensure the quality of our data for further analysis because better. Data quality ensures better accuracy, precision, interpretability of the results of analysis and also that these results are correct and complete.</p>
+<h3> We'll cover:</h3>
+<ul>
+<li> Cleaning data </li>
+<li> Merging multiple Dataframes </li>
+<li> Sub-setting data frames based on a condition </li>
+<li> Ordering data in ascending/descending order </li>
+<li> Reshaping a dataframe </li>
+</ul>
+<div>
 # Cleaning data
 Checking for inconsistencies
 // let’s check for inconsistencies in the restaurant_details state columns
@@ -108,41 +107,12 @@ The mean is computed skipping the nan values. Note, by default skipna argument i
 If we are required to remove all those values containing nan values, we can make use of the drop any (dropna) function:
  
 We can observe that only complete cases are reserved. Now we have a basic understanding of handling missing values, let us go ahead and apply them to the restaurant business data.
+</div>
 
 
-
-Quiz
-Q1 of 3outlined_flag
-What is the need to preprocess data? 
-To correct errors in the data. Check >
-Fill voids in the data.
-Creating correlations.
-To solve outlier issues.
-Explanation :
-Correct. Correcting errors in data maintains consistency for developing insights.
-You have not identified all the correct answers
-Q2 of 3outlined_flag
-Which of the following are performed in preprocessing data?
-Data Cleaning check >
-Merging
-Ordering
-Reshaping
-Explanation :
-Correct. Correct errors in data maintains consistency for developing insights and to pass the data to machine learning models.
-You have not identified all the correct answers
-Q3 of 3outlined_flag
-In which of the following stages of preprocessing are NA values removed?
- 
-	Data Cleaning check >
-	 Melting
-	 
-	Ordering
-	 
-	Reshaping
-Explanation :
-Correct. The data may or may not have missing values. If missing values exist in a data set they are usually dealt with in this stage. Melting is to convert a column to rows. Reshaping will not remove the missing values. Ordering data will move the datapoints around but does not remove the missing values.
-
-Deleting Data
+<div><p>
+<h5>Deleting Data</h5></p>
+<p>
 We’ll first take up the consumer_survey data set and check its shape.
  
 We see 138 rows, and 14 columns.
@@ -164,16 +134,16 @@ Only one column has been dropped. Let’s see which one:
  
 We notice the zip column has been dropped.
 Do note, that the threshold values in all the calculations that we have done can vary depending on the problem statement and the kind of data being analyzed.
+</p>
+<h5>Imputing Data</h5>
+<p>Now, even though we have dropped some rows and columns with too many missing values, you might be wondering if there are still some missing data remaining in our data set. How are we going to handle those? We are going to impute them. We will do so with the help of a simple imputer from the sklearn.impute package. We’ll see various techniques of performing various imputations.
+ </p>
 
-Imputing Data
-Now, even though we have dropped some rows and columns with too many missing values, you might be wondering if there are still some missing data remaining in our data set. How are we going to handle those? We are going to impute them. We will do so with the help of a simple imputer from the sklearn.impute package. We’ll see various techniques of performing various imputations.
- 
-
-Imputing data with a constant value
-In the country column of the restaurant details data set we saw that almost all customers belonged to the Mexico country. Hence all missing values in this column can be filled or imputed with the constant value “Mexico”. Let us first see where the missing values are present.
- 
-Let us cross check:
- 
+<h5>Imputing data with a constant value</h5>
+<p>In the country column of the restaurant details data set we saw that almost all customers belonged to the Mexico country. Hence all missing values in this column can be filled or imputed with the constant value “Mexico”. Let us first see where the missing values are present.
+</p> 
+<div><h6>Let us cross check:</h6>
+ <p>
 We can see that all these respective rows contain missing values in the country column. Then, let us proceed and create a numpy array (country_array) containing the data from the country column. Then create the imputer with the help of the SimpleImputer function. We will provide the strategy as constant and the fill value as Mexico. Then we use the imputer to transport the county array. We will replace the original country column data with the imputed data.
  
 All the missing values have been imputed with Mexico.
@@ -214,8 +184,8 @@ We can impute the average dine in per month data in another way wherein we imput
  
 We can observe that the mean value of each state varies.
 We will first group the data by state, then, transforming the data by filling the missing values with the mean value of each corresponding state. We will store the transformed data in a new object called mean updated and add the state column to this data set. And check the rows again:
- 
-
+</p></div> 
+<div><p>
 Imputing data with the median value
 We can also impute the missing values in the average dine in per month with its median value. Lets see what the median value is:
  
@@ -226,7 +196,7 @@ Then as usual we need to create a numpy array containing all the data from the a
 We can impute the average dine in per month data also with the median value of the corresponding states. We check the median value of each state with the help of the group by function:
  
 Next, like before we will first group the data by state and then transform the grouped data by filling the missing values with the median value average dine in per month with the corresponding state. The data is stored in a new object called median updated. The state column was then added to this data set. Then we check the rows again:
- 
+</p> </div>
 
 Quiz
 What is the need to preprocess data? 
