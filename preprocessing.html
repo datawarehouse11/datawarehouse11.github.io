@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Document Content</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+         # Preprocessing
+### Real world data is often incomplete, inconsistent and is likely to contain errors
+### We must fix our data of these errors as it's important to ensure the quality of our data for further analysis because better
+### data quality ensures better accuracy, precision, interpretability of the results of analysis and also that these results
+### are correct and complete.
+## We'll cover:
+# Cleaning data
+# Merging multiple Dataframes
+# Sub-setting data frames based on a condition
+# Ordering data in ascending/descending order
+# Reshaping a dataframe
+
+# Cleaning data
+Checking for inconsistencies
+// let’s check for inconsistencies in the restaurant_details state columns
+	restaurant_details[“STATE”].value_counts()
+//there’s variations of the same state (two or more states with the same name)
+// there are blanks too, which we’ll deal with later
+// let us update the state column by removing the inconsistencies (with a simple if-else selection construct)
+	restaurant_details[“STATE”] = [“Tamaulipas” if x in [“ tamualipas “, “ Tamaulipas “] else x for x in restaurant_details[“STATE”]]
+// notice the space before and after the column names
+// we repeat this for the rest of the columns
+	restaurant_details[“STATE”] = [“San Luis Potosi” if x in [“ san Luis Potosi “, “ San Luis Potosi “] else x for x in restaurant_details[“STATE”]]
+	restaurant_details[“STATE”] = [“Morelos” if x in [“ morelos “, “ Morelos “] else x for x in restaurant_details[“STATE”]]
+	restaurant_details[“STATE”] = [“Mexico” if x in [“ mexico “, “ Mexico “] else x for x in restaurant_details[“STATE”]]
+
+//let us check the value counts once again to see if the update has been done properly
+	restaurant_details[“STATE”].value_counts()
+// we can observe that for except the blanks, the remaining data has become consistent.
+
+// now let us check for inconsistencies in the restaurant_details country columns
+	restaurant_details[“COUNTRY”]
+//There are two variations of mexico,  and various kinds of missing values, we get to that later, for now, let us make the two variations of mexico uniform for now.
+ 
+
+
+
+	restaurant_details[“COUNTRY”] = [“Mexico” if x in [“ mexico “, “ Mexico “] else x for x in restaurant_details[“COUNTRY”]]
+	restaurant_details[“COUNTRY”]
+ 
+// That’s it, we have successfully removed the inconsistencies from the country column in the restaurant_details table as well.
+
+Checking for negative error-entries in numeric data
+Assume we are interested in analyzing the frequency of analyzing restaurant visits per month and the average expenses per restaurant per month. For this we need to check if there are any negative values incorrectly entered into the FRVPM and AERPM columns from the consumer_survey data set.
+ 
+We need the count of the negative values, hence, we will use the length function here.
+	Print(len(consumer_survey.loc[consumer_survey.FRVPM < 0,:]))
+	Print(len(consumer_survey.loc[consumer_survey.AERPM < 0,:]))
+ 
+We don’t have any negative values, which is great.
+Assume there are negative inconsistent values in some data, if not this data. The negative values might be ignored or replaced with other values while performing the analysis. Whether to ignore or replaced the data depends on the kinds of data and types of analysis performed. For example, let us take sample data with multiple negative values in it.
+	Sample_data = [1, 2, 9, 5, -5, 6, -4]
+One way to handle this data is to replace all the negative values with zeroes. Like this:
+	Result = [0 if x < 0 else I for I in sample_data]
+	Print(result)
+	(1, 2, 9, 5, 0, 6, 0)
+But this would affect any mathematical calculations performed on the data such as mean:
+ 
+ Hence, an alternative would be to ignore the negative values while calculating the mean. Something like this:
+	Result = [I for I in sample_data if I > 0]
+	Print(result)
+ 
+For that, we have learn a few basic techniques for handling incorrectly entered data.
+
+Check for missing values in data
+Before we check for missing data in our restaurant business data. Let us first check a sample data set which contains details about the English and math marks of a few students and then see the various simple ways in which we can find out where the missing values are in a data set and how we can handle them. To see the exact position of where the missing or any end values are, we use the ‘is any’ (df.isna ) function.  
+ 
+Wherever it is true, that is where the missing values are. But, if we have a large data set, just using is_any function might not be that feasible. You might be interested in knowing which columns contains missing values. In this case, we can use ‘any_function’ along with ‘is_any’ function, like:
+	df.isna().any()
+ 
+The Marks_Eng and Marks_Math both contains missing values.
+Similarly, if you want to find out which rows contains missing values, we can use the ‘is_any’ and ‘any’ function in combination with axis = 1
+ 
+Whichever row number corresponds to true, that is where the missing values are.
+We can display the rows containing missing values, by doing this:
+df[df.isna().any(axis = 1)]
+ 
+If we want to display the row numbers containing only the missing values, we can do this:
+df[df.isna().any(axis = 1)].index.tolist()
+ 
+Next, say we want to compute the sum or the mean of the columns containing missing values, let us take the English marks into consideration and compute the mean marks. The mean function contains an argument called skip any which if set to false will result in nan:
+ 
+That is because any operation on a nan value is nan. To avoid this and compute the mean value we can simply set the skip any (skipna) value to True.
+ 
+The mean is computed skipping the nan values. Note, by default skipna argument is set to true.
+If we are required to remove all those values containing nan values, we can make use of the drop any (dropna) function:
+ 
+We can observe that only complete cases are reserved. Now we have a basic understanding of handling missing values, let us go ahead and apply them to the restaurant business data.
+
+
+
+Quiz
+Q1 of 3outlined_flag
+What is the need to preprocess data? 
+To correct errors in the data. Check >
+Fill voids in the data.
+Creating correlations.
+To solve outlier issues.
+Explanation :
+Correct. Correcting errors in data maintains consistency for developing insights.
+You have not identified all the correct answers
+Q2 of 3outlined_flag
+Which of the following are performed in preprocessing data?
+Data Cleaning check >
+Merging
+Ordering
+Reshaping
+Explanation :
+Correct. Correct errors in data maintains consistency for developing insights and to pass the data to machine learning models.
+You have not identified all the correct answers
+Q3 of 3outlined_flag
+In which of the following stages of preprocessing are NA values removed?
+ 
+	Data Cleaning check >
+	 Melting
+	 
+	Ordering
+	 
+	Reshaping
+Explanation :
+Correct. The data may or may not have missing values. If missing values exist in a data set they are usually dealt with in this stage. Melting is to convert a column to rows. Reshaping will not remove the missing values. Ordering data will move the datapoints around but does not remove the missing values.
+
+Deleting Data
+We’ll first take up the consumer_survey data set and check its shape.
+ 
+We see 138 rows, and 14 columns.
+Next, we’ll replace all the question marks with np.nan and say inplace = true. Then, we can simply use the drop any function we discussed previously and use a threshold of 13. This means, as long as the row contains at least 13 non NaN values, it need not be dropped. Anything less than that, then we drop the row. In other words, if the row contains only a single missing value, we will not drop the entire row.
+ 
+4 rows have been dropped.
+Before we proceed, let us reset the index.
+ 
+Next, let us repeat this exercise for the rest of the restaurant details data set.
+Let us first check the shape.
+ 
+In this data set, there are varied kinds of missing data, as observed previously. We have questions makrs, blanks and NA values. We will replace them with np.nan with a for loop. Then drop the rows containing NaN values with a threshold of 11.
+ 
+20 rows have been dropped. Again, reset the index before proceeding.
+ 
+Next, say we need to drop those columns containing more than 40% of missing values. To do this, we will use the drop any function, with axis = 1. Threshold 60% of 110
+ 
+Only one column has been dropped. Let’s see which one:
+ 
+We notice the zip column has been dropped.
+Do note, that the threshold values in all the calculations that we have done can vary depending on the problem statement and the kind of data being analyzed.
+
+Imputing Data
+Now, even though we have dropped some rows and columns with too many missing values, you might be wondering if there are still some missing data remaining in our data set. How are we going to handle those? We are going to impute them. We will do so with the help of a simple imputer from the sklearn.impute package. We’ll see various techniques of performing various imputations.
+ 
+
+Imputing data with a constant value
+In the country column of the restaurant details data set we saw that almost all customers belonged to the Mexico country. Hence all missing values in this column can be filled or imputed with the constant value “Mexico”. Let us first see where the missing values are present.
+ 
+Let us cross check:
+ 
+We can see that all these respective rows contain missing values in the country column. Then, let us proceed and create a numpy array (country_array) containing the data from the country column. Then create the imputer with the help of the SimpleImputer function. We will provide the strategy as constant and the fill value as Mexico. Then we use the imputer to transport the county array. We will replace the original country column data with the imputed data.
+ 
+All the missing values have been imputed with Mexico.
+
+Imputing data with the mode value
+Impute with the mode or most frequent value
+
+In the consumer survey data set, there is a transport column that contains details about the mode of transport consumer use to travel to the restaurants. There are a few missing values present in this column. Let us see which rows they are present in.
+ 
+Only three rows contain missing values. Let us cross check:
+ 
+We can see that these three rows contain missing values. Let’s say we want to impute the missing values with most frequent mode of transportation used by consumers, in other words we wish to impute the missing values with the mode of the column. Let us first find the value count of each transportation.
+ 
+We can see that public transport is the most frequent transportation method use by the consumers. Alternatively, we could also directly find the mode of the transport column, with the help of the mode function.
+
+ 
+Then like before, we need to create a numpy array containing all the data of the transport column, lets name it the transport array. Then we create the imputer, with a strategy of most frequent. Then we use the imputer to transform the original transport array by replacing its data with the imputed data.
+ 
+The missing values have been imputed with public transportation.
+
+Imputing data with the mean value
+In the restaurant details data set, there is an average dining pm column which contains some missing values. This data was a varchar 2 type data type in the oracle data set due to the presence of missing values. Since we’ve already replaced the blank missing values with np.nan, let us convert the column to a numeric data type, since as already established, the attribute is quantitative in nature.
+ 
+Next, let us check where the missing values are present in this column.
+ 
+Four rows contain missing values, let us cross check, lets include the STATE column as well:
+ 
+We can see the rows where the average dine in per month contains missing values and the corresponding state they belong to. We are going to impute this values with the mean value of average dine in per month. Let us see what the mean value is:
+ 
+The mean is around 653, recall that missing values are skipped by default when computing the mean. 
+
+Then as usual we need to create a numpy array containing all the data of the average dine in per month column. We name is average dine in per month array:
+Then we create the imputer, with strategy as mean:
+A new column was added called average dine in per month mean imputed to fill it with the imputed data:
+Then we check the missing rows again:
+ 
+We can impute the average dine in per month data in another way wherein we impute the data with the mean value of the corresponding states. Let us first check the mean value of each state with the help of the group by function:
+ 
+We can observe that the mean value of each state varies.
+We will first group the data by state, then, transforming the data by filling the missing values with the mean value of each corresponding state. We will store the transformed data in a new object called mean updated and add the state column to this data set. And check the rows again:
+ 
+
+Imputing data with the median value
+We can also impute the missing values in the average dine in per month with its median value. Lets see what the median value is:
+ 
+Recall that the missing values are skipped by default. 
+
+Then as usual we need to create a numpy array containing all the data from the average dine in per month column. Followed by creating the imputer with the strategy as median. Then we use the imputer to transform the average dine in per month array. We created a new column called average dine in per month median imputed and filled it with the imputed data. Then we check the rows again:
+ 
+We can impute the average dine in per month data also with the median value of the corresponding states. We check the median value of each state with the help of the group by function:
+ 
+Next, like before we will first group the data by state and then transform the grouped data by filling the missing values with the median value average dine in per month with the corresponding state. The data is stored in a new object called median updated. The state column was then added to this data set. Then we check the rows again:
+ 
+
+Quiz
+What is the need to preprocess data? 
+To correct errors in the data.
+Fill voids in the data.
+Creating correlations.
+To solve outlier issues.
+
+1 and 2
+ 
+1, 2 and 3
+ 
+1,2 and 4
+ 
+All of the options
+
+1,2 and 4 
+hich of the following are performed in preprocessing data?
+Data Cleaning
+ 
+Merging
+ 
+Ordering 
+Reshaping
+
+All of the above
+In which of the following stages of preprocessing are NA ( null values ) values removed?
+
+Data Cleaning
+ 
+Merging
+ 
+Ordering
+	
+
+Reshaping
+
+Data cleaning
+
+Which of the following lines of code imputes the missing values in the dataframe df? 
+(Consider the following line of code that imports sklearn Imupter package)
+from sklearn.impute import SimpleImputer
+
+SimpleImputer().fit_transform(df)
+ 
+sklearn.SimpleImputer().fit_transform(df)
+ 
+df.SimpleImputer().fit_transform()
+ 
+SimpleImputer(df)
+
+SimpleImputer().fit_transform(df)
+
+Merging Multiple Data Frames
+Two datasets can merged in python using the merge function from pandas. This function merges data frame objects by performing a database style join operation by columns or indexes. Let us use this function and merge restaurant details dataset and cuisine dataset. I have displayed the column values of both the data sets just to recall their names.
+ 
+  Let us use the merge function and create a new data set called restaurant_details_cuisine. We need to first provide the left data object which is restaurant details and then the right data frame object which is cuisine. Let us set the index of cuisine to placeID so that we can use it as the join key. Next, we need to provide the value to an argument called left_on as PLACEID which is the column from the left data frame which is reatuarant_details to be used as the key. And then, we just need to say that right index is equal to true. We can also provide the value to the how argument depending on which kind of join we want to perform on the data frames as either left, right or outer, or inner. We will perform the inner join. Do note that the default value of the how argument is the inner join. The inner join will ensure that only those rows that appear in both the data frames are part of the resultant restaurant_details_cuisine data frame.
+ 
+ 
+Let us check the column values 
+ 
+And we can see that the Rcuisine column from the cuisine data frame has been joined with the restaurant_details data. Let us also check the shape of each data frame.
+ 
+So while the restaurant details data frame has 110 rows and the cuisine data frame has 916, the merged data frame restaurant_details_cuisine has 97 rows.
+
+Next, say we have to merge the restaurant parking data frame with the restaurant_details_cuisine data frame that we just created. We just need to repeat the same process again. 
+We have the column names of each of the data frames:
+ 
+And we will perform an inner join again:
+ 
+Then we look at the values of the restaurant_details_cuisine_parking data frame:
+ 
+We can see that the parking lot column from the restaurant parking data frame has been joined in with the restaurant_details_cuisine data frame.
+Thus we have successfully learned how to merge multiple data frames.
+
+Subsetting a dataframe 
+Let us now subset the restaurant_details_cuisine_parking data frame to extract some information that we are interested in. assume we are interested in displaying only the place id, name, cuisine, and parking lot availability at a restaurant. For this, we just need to select those particular columns from the data frame using the .loc function and display the information:
+ 
+We can see that the data frame has been subsetted and the required details has been displayed in a neat manner. 
+Next, let us check the value count of cuisine just to see the variety of cuisines available in mexico:
+ 
+We can observe there are a variety of cuisines being offered by various restaurants.
+Let us also display the value count of parking lot column:
+ 
+We can observe that there are four kinds of parking facilities available. None implies no parking.
+Now, consider we are interested in finding out which restaurants in Mexico has Mexican cuisines and provide a public parking space.
+To get this information we need to subset the data with the help of a logical AND condition. Let us display the name, cuisine and parking lot column. 
+ 
+ 
+We have our required info. Now let’s say it’s another day and we are now interested in having food from a restaurant that offers either Mexican or American cuisine.
+To get this information, we need to write a logical OR condition.
+ 
+The & change to or (the pipe)
+ 
+ 
+We can see that the various restaurants that offer either Mexican or American cuisines have been displayed.
+Now there is another elegant way of doing this with the help of is_in function:
+ 
+ 
+This option is much better, especially if you have more than two options to choose from.
+ 
+Both output is the same.
+
+Ordering a Data Frame
+Assume we need to order the consumer survey data based on frequency based on restaurant visits per month. We can sort or order the rows either in the increasing order of the FRVPM column or in the decreasing order based on our requirements. I have displayed the column values of the consumer survey data set just to recall their names. Assume we are only interested in the gender, smoking, marital status and FRVPM (frequency of restaurant visits per month) of the consumers. Hence, I have subsetted the data corresponding to the same.
+ 
+Now, let us first sort the data in the ascending order. We will do this by using the sort value function. We need to provide value to the by-argument of the function as the name of the column in which we wish to sort the data. In our case, this column is FRVPM. We also need to say that ascending is equal to true, which is also the default value. Then we display a few rows with the head function.
+ 
+We can see that the data is ordered in the ascending order with respect to the FRVPM column. Now let us sort the data in the descending order as well. To do this, we just need to mention that ascending = false in the sort value function.
+ 
+We can see that the data has been ordered in the descending order with respect to the FRVPM column. 
+With that, we have successfully learned a technique to order the data with respect to a column.
+
+Adding a new feature to a dataframe
+We will learn various techniques to shape a data frame. We start by adding a new feature or column to the restaurant details cuisine parking dataframe. Assume that, we are interested in creating a column that contains the availability of some kind of parking facility at a restaurant. What this means, is that we are not interested to know in what kind of parking facility are available but whether or not there are some kind of parking space available. I have displayed the parking lot value counts for our reference. 
+ 
+Let us name the new feature as parking availability. this column will contain either True whether there are any kind of parking availability or False otherwise. Let us write the condition for the same.
+ 
+What we have said, is that extract data from the parking lot column and check if parking lot is not equal to none. If this condition is satisfied then store the value True, else, store the value False in the parking availability column. Let us check the data by displaying a few rows. We display the PlaceID, the name of the restaurant, the cuisines they offer, the original parking lot column and the new feature, parking availability.
+ 
+We can see where ever parking lot equals none, parking availability is false. Wherever the parking lot value is anything else (public, private or valet) the availability is true.
+We can write this function using the is_in operator or the ‘or’ logical operator that we discussed earlier but that would be a bit lengthier code. But go ahead and try them out or writing the code in your own way. 
+Let us try to calculate the value count of the parking availability column.
+ 
+We can see that out of the 97 restaurants we have 53 of them that has some kind of parking and 44 who does not.
+With that we have successfully added a new relevant feature to the restaurant details cuisine parking data set.
+
+Melting a dataframe
+Let us now take the user rating data set and try to reshape it to display the information in a simple manner. I have already displayed the rows of the user rating data set for our reference.
+ 
+What we’re going to do is melt the data set which means we are going to un-pivot the data set from a wide format to a long format. To do this, we will use the melt function from pandas.  The first argument of the function is the name of the data frame which is user rating, the second argument is id vars, wherein we need to provide columns to be used as the identifier variables. Which in our case would be user id and place id, then, the argument is value vars wherein we need to the columns to un-pivot. If we do not specify this argument’s value, then it takes all the columns not mentioned as id vars and un-pivots them. So in our case, value vars would food rating and service rating. Then we can also provide a name for the variable column, let us call it, food slash service (food/service). Then let us also give a name to value column called rating.
+ 
+ 
+And then that is it, let us store the melted data in a variable called user_rating_melted.
+Let’s print the head and tail of the melted data set and observe the results.
+  
+We can see that the food rating and service columns has been stacked into a single column which we have called food/service and the corresponding ratings has been stacked in the rating column.
+With that, we have successfully learned how to melt a data set.
+
+Casting a dataframe
+Assume we need to reshape the user rating data set to display the average food and service rating for each restaurant. This can be done with help of the casting operation. To do casting in python we need to use a function called pivot_table which will help us create a spreadsheet style pivot table as a data frame. The first argument would be the data frame to be casted which in our case is user_rating_melted. The levels in the pivot table will be stored in multi-index objects on the index and columns of the resultant data frame. Let us provide the values for both. The index in our case should be place id, and the columns argument value would be food/service. Then we need to provide the columns who’s values needs to be aggregated, this would rating. Then the aggregation function which will be mean since we need to compute the average rating.
+ 
+And there it is, our casted data set. The food rating column set displays the average food rating at each restaurant and so does the service rating column.
+We have successfully learned how to perform the casting operation on a data set.
+
+Now that we have pre-processed all the data, let us explore and summarize the data.
+
+Exploring and Summarizing data
+Exploring and Summarizing Quantitative data
+Five Number Summary
+Five Number Summary of a quantitative attribute consists of five numbers depicting the variation in the data. The five numbers are:
+-	The minimum value of an attribute
+-	The 1st Quartile/ 25th percentile – which is the value in which less than 25% of the values of an attribute (in the data) lies.
+-	The median/2nd Quartile/ 50th percentile – which is the value below which 50 percent of the values of an attribute lie.
+-	The 3rd Quartile/75th percentile – of an attribute which is the value below 75 percent of the values of an attribute.
+-	The maximum value of an attribute
+Let us see how we can compute the five number summary of the FRVPM from the consumer survey.xlsx file. We are going to compute the five number summary using the describe function from pandas. This function generates the descriptive statistics that summarize the central tendency, dispersion and shape of a datasets distribution excluding the NaN values. We will compute the five number summary of the frequency of restaurant visits per month from the consumer_survey dataset. 
+ 
+We can see that the count of the observations or rows in 134. The mean FRVPM is 9.06. the standard deviation of the distribution is 6.9. then we have the five number summary, namely the minimum value of the frequency of restaurant visits p.m. which is 2. The maximum value is 60. The 1st Quartile/25th percentile is 5. In other words, 25% of the consumer visits less than 5 times in a month. Similarly, 50% of the consumers visits restaurants less than 8 times in a month, which is nothing but the median of the data. Then, 75 % of the consumers visit restaurant less than 12 times in a month, which is nothing but the 3rd Quartile.
+With that we have successfully computed the five number summary of the frequency of restaurant visits per month.
+
+Box Plot
+A box plot or a box and whisker diagram is a standardized graphical way of displaying the distribution of quantitative data based on the five number summary. The graph consists of a box which graphically represent the first quartile, the 3rd quartile and the median values of a quantitative data set. The lines extending from the box, called whiskers, (like the whiskers of a cat) indicate the variability outside the upper and lower quartiles. Any values beyond the whiskers are treated as outliers. 
+Box Plot
+ 	 
+ 	 
+ 
+At this point, we need to calculate the points at which we will draw the whiskers. For this, we will calculate the Inter Quartile Range (IQR) which is the difference between the 3rd quartile and the 1st quartile. The whiskers are usually drawn at the position of the data points which falls just below the 3Q + 1,5 * IQR or just above 1Q – 1,5 * IQR. So any data point below this or any data point above this can be chosen as the upper and lower whiskers, respectively.
+An outlier is any data point that falls beyond the whiskers, either beyond the upper whisker or below the lower whisker. Or in other words, we can say that any observation that lies outside the overall pattern of the distribution is an outlier.
+Let us plot a box plot for the FRVPM attribute from the consumer_survey.xlsx file. We will use the box plot function from seaborne to plot the box for the FRVPM attribute. The y-axis value needs to be FRVPM from consumer_survey. Let us provide a title (plt.title) to the box plot as boxplot of FRVPM. We display the plot with plt.show().
+ 
+We can visually observe the upper and lower whiskers, the 1st and 3rd quartile and the median. We can observe that the boxplot function has determined and plotted the outliers as well. Let us check where and how the whiskers have been drawn exactly and which data points has been considered as outliers. Let us first print the first three largest values from the FRVPM column by using the nlargest function.
+ 
+We can see the 3 largest values in the FRVPM column. Let us compute the IQR, the upper whisker limit and the lower whisker limit as discussed earlier.
+ First we will compute the IQR. We will extract 75th and 25th percentile from the five number summary that we previously calculated because IQR is nothing but the difference between the two. Then we will calculate the upper limit. Then the lower limit.
+ 
+We can see that the upper limit is 22.5. since the 60 and 45 are beyond the upper limit they are considered outliers.  Since 22 is the largest value below 22.5 that is where the upper whisker is drawn. We don’t have any values in the RFVPM column that is lower than the lower limit and hence no outliers. Since 2 is the largest value after -5,5 that is where the lower whisker is drawn.
+With that we have successfully plot the box and whisker diagram for the FRVPM attribute
+
+
+Histogram
+A histogram is a graphical representation of quantitative data and shows distributions across various ranges. While plotting a histogram, the entire range of values of the data are divided into series of interval called bins. Then for each interval we count how many falls into that interval. If bins are of equal size a rectangle are created over the bin and the height of the rectangle are proportional to the frequency of the data of that bin. And if the bins are not equal size, then the area of the created rectangle is proportional to the frequency of the data in that bin.
+Let us plot a simple histogram on the FRVPM attribute. we will use the distplot function from seaborne. By default, this function plots the histogram as well as the Gaussian kernel density estimate. We will plot only the histogram. The x-axis value needs to be FRVPM from consumer survey. Then we need say that kde is equal to false as we do not need the kernel density estimate and provide a title for the plot. Label the x-axis as FRVPM and y-axis as Frequency and display the plot.
+ 
+From the plot we can observe that a higher number of consumers visit restaurants less than five times in a month. We call also observe that the histogram has a long tail which expands until 60 which indicates the presence of outliers and that the data are right-skewed.
+With that we have successfully plotted the histogram.
+Next, try to compute the five number summary and plot the box plot and histogram for the average expenses in a restaurant per month, that is the AERPM attribute of the consumer survey data set, all by yourself.
+
+Exploring and Summarising Qualitative data
+Cross Tab
+Cross Tabulation allows us to:
+-	Take a qualitative attribute as input and
+-	Gives the frequency of the input data across various levels/categories as output or in other words, a frequency table as the output. This is an important tool to quickly summarize the data.
+Let us perform cross tabulation of a few attributes.
+We will first create a frequency table from the gender column in the consumer survey dataset using the cross tab function from pandas. Index is the gender column. We give the column argument value as count.
+ 
+Let us display the col_0. For that, we need to say colnames is equal to a blank or space.
+ 
+From the cross tabulation we can observe that in the consumer survey that was conducted, 61 were female and 73 were male.
+Let us create a cross tab for the income column.
+ 
+We can observe that the majority of the consumers, almost 61% belonged to the medium income group. Almost 27% belonged to the low income group and approximately 12 % belonged to the high income group.
+Next, let’s create a cross tab for the FRVPM attribute. “Yes, I know that it is a quantitative attribute, but let say we want to see how many customers visit restaurants more than 10 times p.m. then we can use the cross tab function along with the logical condition that results in a true or false value, which is qualitative in nature.
+ 
+We can observe that only 44 consumers visit restaurants more than 10 times p.m. and 90 of the consumers visits restaurants less than 10 times p.m.
+Next, we create a cross tab from the region attribute from the restaurant details data set.
+ 
+We can see that 50 of the consumers were from west and the remaining 60 were from east.
+With that we have successfully created cross tabs from a few qualitative attributes and created meaningful insights from them. Do try to create cross tabs from the remaining attributes from the restaurant business data and observe the results.
+
+Bar Chart
+Bar charts are used to graphically represent (the output of the cross tab function) the frequency of qualitative data across various categories. 
+The frequency is represented as bars 
+The height of the bar is directly proportional to the number of records available in that category.
+Let us create a few bar charts.
+We will create a bar chart for the income attribute from the consumer survey data set first. But, before we do that, let us create the data type of the income attribute to a pandas categorical data type. To do this, we will use the categorical function from pandas.  And provide it the data from the income column. Then we need to provide the categories in the order it makes sense since it’s an ordered qualitative attribute where the order is low, less than medium, less than high. Then, we need to mention ordered is equal to true. 
+ 
+With this we have successfully converted the data type of the income attribute to categorical.
+Next, we will use the countplot function from seaborn to create the bar chart. We need to provide the x-axis attribute which is income and the name of the data frame which is consumer survey. We give a title as “Barchart of Income”.
+ 
+We observe visually that the majority consumers from the consumer survey belonged to the medium income group.
+Next, let’s create another bar chart to visualize how many consumers visits restaurants more than 10 times per month. For this, let us subset the data first. We give a column name as FRVPM > 10. And then as before, let us create a count plot and give a title as “bar chart of consumer with FRVPM  greater than 10”. 
+ 
+We can see than the majority of the consumers visit restaurant less than 10 times p.m.
+With that we have successfully learned how to create bar charts. Go ahead and create bar charts for other qualitative attributes and try to draw some meaningful insight from them.
+
+Developing Insights from Data
+Now that we have successfully explored and summarized all the relevant data, let us extract some meaningful insight from the data.
+ 
+
+
+
+
+Exploring relationship between qualitative and quantitative attributes
+Let’s say we are interested in exploring the relationship between sales of a restaurant and the region it belongs to, in other words:
+-	How the sales of restaurants varies, with respect to regions?
+For this we need to look at the average dine in per month and region attributes of the restaurant details data table. While the average dine in per month is a quantitative attribute, region is a qualitative attribute. Let us see how we can explore the relationship between these two features. 
+ 
+Recall that we have imputed the average dine in per month in multiple ways, which included with the mean value, and with the median value on the entire column data and also by grouping the data on the state column. Let us say we want to update the average dine in per month with the mean updated value.
+ 
+This was the one where we computed mean value per state and then imputed the missing values based on the corresponding states they belonged to. 
+Next, we will plot multiple box plots. Assume we are interested to know how the average dine in p.m. varies in various regions. To get this insight, we need to provide the y-axis value which is obviously the average dine in per month column. The x-axis column would be the region attribute and the data value would be restaurant details. We name this plot “east vs west dine in p.m.”.
+ 
+We can observe that there are no outliers in both the east and west regions and also that the median or the 50th percentile of the average dine in per month in the west region is clearly more than that of the west region. This might imply that the restaurants in the western region of the Mexico country might have better sales than those in the eastern region. 
+Similarly, we can plot multiple box plots to visualize how the five number summary of a quantitative attribute varies with respect to a qualitative attribute.
+Next, let us plot multiple histograms and compare them with the help of the distplot function from seaborn. Assume we are interested to know how the frequency of average dine in per month varies in both the east and west regions. “I have created two subsets of data which will contain the region details and the average dine in per month details, one for the east and one for the west region”.
+  
+
+Let us use the distplot function and plot the distribution of average dine in p.m. in the east region in red color and make kde false and since we have two plots on the same axis, we will need a legend, for that we give the label as east.  Similarly, let us plot the distribution of average dine in per month for the west region in blue color. We give a value to the x-axis as average dine in per month and for the y-axis as frequency. We give a title to the plot as “east vs west frequency of average dine in per month”.
+ 
+We can observe how the frequency of average dine in per month varies in both the east and west regions. We can also observe that compared to the east, the median average dine in p.m. in the west is higher. Which again could be an indication of comparatively better sales in the region. Similarly, we can plot multiple histograms to see how the distribution of a quantitative attribute varies with respect to the categories of a qualitative attribute. Go ahead and try to plot and explore more such relationships from the remaining data attributes.
+
+
+Exploring relationship among qualitative attributes
+Let’s say we want to find out:
+-	How the pricing of restaurants varies according the region?
+-	How the frequency of restaurant visit of a consumer is affected by his income?
+-	How many costumers from various income groups visits restaurants more than five times in a month?
+For this, we need to explore the relationships between attributes price and region from the restaurant details data table. Do note, that both of these features are qualitative in nature. We will fist use a pivot table to explore price and region of a restaurant. For this we will use the pivot table function. Provide the index as region attribute and value as the PlaceID attribute, the column value is price and the aggregate function is count. 
+ 
+We have our pivot table. We can draw various insights from the pivot table. Such as, there are more high priced restaurants in the East region than in the West region, more than double actually. There are slightly more low priced restaurants in the east region than in the west region. And, there are more medium priced restaurants in the west region than in the east region of Mexico.
+Let us now create a pivot table to find out how many consumers from various income groups visit restaurants more than five times in a month. But, before we do that, we need to reset the index and create separate column for the same as we do not have any unique id key in the consumer survey data set.
+ 
+Let us display the data both before and after we reset the index as this will give us an idea of how resetting the index change the data.
+ 
+We can observe that an index column has been added. Now, let us use the index column in the pivot table to get the required insights. Value would be index and index argument would be income. For the columns argument we will provide a logical condition that will result in either true or false. And the aggregate function would be count. 
+ 
+From the results it is evident that all the consumers belonging to the high income group and most of the consumer belonging to the medium income group visits restaurants more than five time a month. We can also observe that the consumers belonging to the low income group there are a few more consumers who visit restaurants less than five times in a month than those who visit them more than five times in a month.
+We can also use pivot tables to find the relationship between more than two qualitative attributes. To demonstrate this, let us take an example where say we are interested in finding out how many of the 64 consumers from the medium income group who visits restaurants more than five times a month are male. To extract this information from data, let us just add the gender attribute to the index argument of the pivot table function.
+ 
+We can see that 30 of the 64 consumers from the medium income group who visit the restaurant more than 5 times in a month are male and 34 are female.
+With that we have successfully explored the relationship amongst few qualitative attributes. Similarly, try to explore the relationships amongst the other qualitative attributes in the restaurant business data.
+
+Exploring relationship among quantitative attributes
+Say we want to find out what is the trend in the restaurant business over the last decade or so. In other words, we are interested in:
+-	How the expectations of consumers are changing with time, with respect to the business data?
+Let’s take a specific case where we want to know:
+-	Do people prefer to eat at the restaurant?
+Or
+-	Do people prefer to order in?
+Let’s try to plot and draw some insights and observing the three features amongst the dining preferences data, namely year, dine_in and home_delivery.
+ 
+Note, that all three attributes are quantitative in nature. We have displayed a few rows from the dining data set just to recall how the data looks like. To visualize how the number of consumers who’d prefer dining in the restaurant as opposed to those who’d prefer dining at home, we will plot a scatter plot with help of the scatter plot function from seaborn. The year axis would be year and the y-axis would dine_in and data being the dining preferences. Let us plot the dining variation in red color and give it a label as well. Similarly, let us plot the home delivery variation in blue color. Let us plot the legend, the x-axis label which would be year and the y-axis which could be say number of consumers. Let us give a plot title say dine in vs home delivery in 1990 to 2016.
+ 
+ 
+We can observe that overall most of the consumers has preferred dining in the restaurants over home delivery from 1990 to 2016. We also notice, that from 2005 to 2016 while the number of dine in orders has approximately been in the same range while the number of home delivery has significantly increased in the same period of time. 
+With that we were successfully able to explore relationships amongst a few quantitative attributes and also observed some trends in the data. Similarly try to explore the relationships amongst the other quantitative attributes in the restaurant business data.
+
+The Simpson’s Paradox
+[doesn’t want to play!]
+Other Techniques to develop insights from data 
+We have developed quite a few insights on the restaurant business data with the help of a few techniques. But it is important to note that these are not the only techniques available. Depending on the type of data we’re dealing with and the problem statement at hand, there are many other techniques available. For example:
+-	Regression:
+o	A technique for determining the statistical relationship between two or more variables, where a change in a depend variable is associated with and depends on one or more independent variables.
+-	Classification:
+o	A technique to arrange data into homogenous groups or classes based on some common characteristics present in the data.
+-	Clustering:
+o	A technique used to classify objects into groups such that objects belonging to one group are much more similar to each other and rather different from the objects belonging to other groups. 
+This serves as a method of discovery by solving classification issues. You will the opportunity to learn these and many other techniques to study the data and develop useful insights as you progress through the rest of the courses in the Citizen Data Science Specialization.
+
+Question 4 developing insight from data
+
+
+
+        <h1>My Word Document Title</h1>
+        <p>Your Word document content will be here.</p>
+    </div>
+</body>
+</html>
